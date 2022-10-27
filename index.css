@@ -1,0 +1,44 @@
+
+.autofill-pop--container {
+  position: fixed;
+  padding: 5px 0;
+  border-radius: 5px;
+  min-width: 100px;
+  max-width: 300px;
+  max-height: 300px;
+  min-height: 2em;
+  font-size: 14px;
+  font-family: GTAmericaExp-Regular;
+  background: rgba(255, 255, 255, 1);
+  z-index: 999999;
+  box-shadow: 0 0 5px 1px rgba(0,0,0, .3);
+  cursor: default;
+}
+
+.autofill-pop--container ul {
+  margin: 0;
+  padding: 0;
+}
+
+.autofill-pop--container li {
+  padding: 0 10px;
+  line-height: 2em;
+  list-style: none;
+}
+
+.autofill-pop--container p {
+  margin: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+  line-height: 2em;
+}
+
+.autofill-pop--container li:hover,
+.autofill-pop--container p:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.autofill-pop--container .line {
+  margin: 5px 0;
+  border-top: 1px solid #ddd;
+}
