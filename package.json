@@ -1,17 +1,15 @@
 {
-  "name": "electron-autofill",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
+  "description": "An autofill library developed for electron app, temporarily implemented by js",
+  "private": true,
   "scripts": {
+    "type": "tsc",
     "dev": "rollup -wc",
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.4",
@@ -23,7 +21,7 @@
     "typescript": "^4.8.4"
   },
   "workspaces": [
-    "packages/"
+    "packages/*"
   ],
   "dependencies": {
     "localforage": "^1.10.0"
