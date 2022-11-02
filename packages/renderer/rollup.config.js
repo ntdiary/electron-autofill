@@ -2,19 +2,23 @@ import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import typescript from "rollup-plugin-typescript";
+import terser from '@rollup/plugin-terser';
 
 export default {
-  input: "packages/renderer/src/index.ts",
+  input: "src/index.ts",
   output: {
     file: "dist/index.js",
-    name: 'Autofill',
-    format: "umd",
+    format: "es",
     sourcemap: false,
   },
   plugins: [
-    resolve(),
+    resolve({
+      moduleDirectories: ['node_modules'],
+    }),
     commonjs(),
     typescript(),
     babel({ babelHelpers: "bundled" }),
+    terser()
   ],
+  external: ['localforage'],
 };
