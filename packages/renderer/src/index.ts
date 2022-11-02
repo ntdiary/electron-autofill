@@ -1,5 +1,6 @@
 import {AutofillSelect} from "./container";
-import localforage from "localforage";
+import {autoSave} from "./group";
+import {setupStore} from "./form";
 
 type BaseOption = {
   driver: string;
@@ -24,6 +25,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'autofill-select': AutofillSelect,
   }
+  interface WindowEventMap {
+    autofill: CustomEvent
+  }
 }
 
 customElements.define('autofill-select', AutofillSelect);
@@ -42,7 +46,7 @@ function isDatabase(option: Option): option is DatabaseOption {
 class ElectronAutofill {
   private _config: Option | undefined;
 
-  private _node: HTMLElement;
+  private readonly _node: HTMLElement;
 
   private _ready: boolean;
 
@@ -61,14 +65,23 @@ class ElectronAutofill {
     this._node.style.setProperty('--autofill-index', config.zIndex || null);
     document.body.appendChild(this._node);
     if (isDatabase(config)) {
-      localforage.config({
-        name: config.dbName,
-        storeName: config.storeName,
-      });
+      setupStore(config.dbName, config.storeName);
     }
+    window.addEventListener('autofill', (e: CustomEvent<string>) => {
+      const detail = e.detail;
+      if (detail === 'save') {
+        autoSave();
+      }
+    });
     this._ready = true;
   }
-}
 
+  save() {
+    const e = new CustomEvent('autofill', {
+      detail: 'save'
+    });
+    window.dispatchEvent(e);
+  }
+}
 
 export default new ElectronAutofill();

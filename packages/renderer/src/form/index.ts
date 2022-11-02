@@ -12,6 +12,19 @@ import {isInputElement} from "../utils";
 import localforage from "localforage";
 import {html, TemplateResult} from "lit";
 
+// TODO:test
+declare global {
+  interface Window {
+    localforage: LocalForage
+  }
+}
+let store: LocalForage;
+
+function setupStore(name: string, storeName: string) {
+  store = localforage.createInstance({name, storeName})
+  window.localforage = store;
+}
+
 class Form<T extends Item> {
   inputs: HTMLFormControlsCollection;
   data: T[];
@@ -25,6 +38,9 @@ class Form<T extends Item> {
 
   async fetchData() {
     this.data = [];
+  }
+
+  async saveData() {
   }
 
   buildNodes(): TemplateResult | undefined {
@@ -105,11 +121,37 @@ class PasswordForm extends Form<Password> {
   }
 
   async fetchData() {
-    const arr = await localforage.getItem<IPassword[]>("password");
+    const arr = await store.getItem<IPassword[]>("password");
     if (arr === null) {
       return;
     }
     this.data = arr.map(el => new Password(el));
+  }
+
+  async saveData() {
+    let arr = await store.getItem<IPassword[]>("password");
+    if (!arr) {
+      arr = [];
+    }
+    const obj: IPassword = {username: '', password: ''};
+    for (const key of PasswordForm.keys) {
+      const item = this.inputs.namedItem(key);
+      if (!isInputElement(item)) {
+        return;
+      }
+      obj[key] = item.value;
+    }
+    const item = arr.find(item => item.username === obj.username);
+    if (item) {
+      if (item.password === obj.password) {
+        return;
+      }
+      item.password = obj.password;
+    } else {
+      arr.push(obj);
+    }
+    new Notification('test', {body: 'password has been saved'});
+    await store.setItem<IPassword[]>('password', arr);
   }
 
   autofill(item: Password, preview: boolean) {
@@ -128,7 +170,7 @@ class CardForm extends Form<Card> {
   }
 
   async fetchData() {
-    const arr = await localforage.getItem<ICard[]>("card");
+    const arr = await store.getItem<ICard[]>("card");
     if (arr === null) {
       return;
     }
@@ -144,5 +186,7 @@ class CardForm extends Form<Card> {
 
 export {
   PasswordForm,
-  CardForm
+  CardForm,
+  Form,
+  setupStore
 }

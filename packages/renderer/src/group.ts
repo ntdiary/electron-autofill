@@ -1,23 +1,37 @@
 import {CardForm, PasswordForm} from "./form";
 
-type formType = PasswordForm | CardForm | null;
+type formType = PasswordForm | CardForm | undefined;
+
+let holder: formType;
 
 /**
  * parse the form type
  *
- * @param target
- * @param elements
+ * @param input
+ * @param formElement
  */
-function buildForm(target: HTMLInputElement, elements: HTMLFormControlsCollection): formType {
-  const name = target.name;
+function buildForm(input: HTMLInputElement, formElement: HTMLFormElement): formType {
+  const name = input.name;
+  let form: formType;
   if (PasswordForm.keys.findIndex(el => el === name) >= 0) {
-    return new PasswordForm(elements);
+    form = new PasswordForm(formElement.elements);
+    holder = form;
   } else if (CardForm.keys.findIndex(el => el === name) >= 0) {
-    return new CardForm(elements);
+    form = new CardForm(formElement.elements);
   }
-  return null;
+  return form;
+}
+
+function autoSave() {
+  if (!holder) {
+    return;
+  }
+  holder.saveData().then(() => {
+    holder = undefined;
+  });
 }
 
 export {
   buildForm,
+  autoSave,
 }
